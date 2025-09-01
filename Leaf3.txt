@@ -1,0 +1,40 @@
+conf t
+hostname leaf3
+feature ospf
+router ospf UNDERLAY
+router-id 10.2.0.13
+
+interface loopback 0
+ip address 10.2.0.13
+ip router ospf UNDERLAY area 0.0.0.0
+
+interface loopback 1
+ip address 10.3.0.13/32
+ip router ospf UNDERLAY area 0.0.0.0
+
+
+interface eth1/1-2
+no switchport
+mtu 9216
+
+interface eth1/1
+ip address 192.168.0.10/30
+ip router ospf UNDERLAY area 0.0.0.0
+no shutdown
+
+interface eth1/2
+ip address 192.168.0.26/30
+ip router ospf UNDERLAY area 0.0.0.0
+no shutdown
+
+feature pim
+ip pim rp-address 10.254.254.1 group-list 239.1.1.0/24
+interface loopback 0
+ip pim sparse-mode
+interface loopback 1
+ip pim sparse-mode
+interface eth1/1-2
+ip pim sparse-mode
+
+exit
+copy running-config startup-config
